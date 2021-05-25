@@ -1,0 +1,121 @@
+# Copyright 2020-2021, The Tremor Team
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#
+# templates/deployment.yaml
+#
+# Deployment for tremor app.
+#
+# @author Njegos Railic <nrailic@wayfair.com>
+# @copyright 2020 Wayfair, LLC -- All rights reserved.
+
+{{- if eq .Values.kind "Deployment" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "tremor.fullname" . }}
+  labels:
+    app: {{ template "tremor.fullname" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    component: tremor
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "tremor.fullname" . }}
+      component: tremor
+  updateStrategy:
+{{ toYaml .Values.updateStrategy | indent 4 }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "tremor.fullname" . }}
+        chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+        component: tremor
+        heritage: {{ .Release.Service }}
+        release: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ tpl (toYaml .Values.files) . | sha256sum }}
+    spec:
+      serviceAccount: {{ template "tremor.fullname" . }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName | quote }}
+      {{- end }}
+      containers:
+        - name: event-exporter
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          {{- with .Values.args }}
+          args:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.ports }}
+          ports:
+            {{- range $key, $port := . }}
+            - name: {{ $key }}
+              {{ toYaml $port | nindent 14 }}
+            {{- end }}
+          {{- end }}
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.env }}
+          env:
+          {{- range $key, $value := . }}
+            - name: {{ $key | upper | replace "." "_" }}
+              value: {{ $value | quote }}
+          {{- end }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/tremor/config
+              readOnly: true
+          {{- with .Values.extraVolumeMounts }}
+            {{ toYaml . | nindent 12}}
+          {{- end }}
+      {{- with .Values.extraInitContainers }}
+      initContainers:
+        {{ toYaml . | indent 8}}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{ toYaml . | indent 8 }}
+      {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ template "tremor.fullname" . }}-config
+      {{- if .Values.extraVolumes }}
+        {{ toYaml .Values.extraVolumes | indent 8}}
+      {{- end }}
+ {{- end -}}
