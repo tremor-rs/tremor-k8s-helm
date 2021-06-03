@@ -5,19 +5,18 @@ surface and likelihood of direct or indirect security risks to users of the soft
 
 Specifically:
 
-  * Tremor favors safe over unsafe rust code.
-    * Safe code is generally considered the better option
-    * Unless, performance critical concerns on the hot path suggest otherwise
-    * Over time, unsafe code should be displaced with safe code
-  * Tremor is conservative on matters of code health.
-    * Clippy is pedantic mode is mandated for all rust code
-    * Property based testing, model-based testing and fuzz-testing are used
-    * Additional audits for code quality are in force
-  * Static analysis
-    * Tremor analyses external library dependencies for all direct and indirect dependencies
-    * Tremor logs and reports all LICENSE, CVE and other violations both in our CI code and using other tools
-    * Additional dynamic and static analysis methods can be added to broaden/deepen coverage
-
+* Tremor favors safe over unsafe rust code.
+  * Safe code is generally considered the better option
+  * Unless, performance critical concerns on the hot path suggest otherwise
+  * Over time, unsafe code should be displaced with safe code
+* Tremor is conservative on matters of code health.
+  * Clippy is pedantic mode is mandated for all rust code
+  * Property based testing, model-based testing and fuzz-testing are used
+  * Additional audits for code quality are in force
+* Static analysis
+  * Tremor analyses external library dependencies for all direct and indirect dependencies
+  * Tremor logs and reports all LICENSE, CVE and other violations both in our CI code and using other tools
+  * Additional dynamic and static analysis methods can be added to broaden/deepen coverage
 
 # Non Recommendation
 
@@ -26,7 +25,6 @@ We do *not* recommend running tremor outside of corporate firewalls at this time
 Although every care is taken to ensure there are no security flaws within the code-base
 tremor, to date, has been designed with deployment in secure, well-defended environments
 with active intrusion detection and defenses run by security professionals.
-
 
 # Recommendation
 
@@ -62,7 +60,6 @@ to your report, the security team will endeavor to keep you informed of the prog
 and full announcement.
 
 ## Public keys for disclosures
-
 
 If you have not received a reply to your email within 48 hours, or have not heard from the security team for the past five days, there are a few steps you can take (in order):
 

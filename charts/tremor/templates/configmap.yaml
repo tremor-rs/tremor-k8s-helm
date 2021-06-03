@@ -13,23 +13,28 @@
 # limitations under the License.
 
 #
-# templates/serviceaccount.yaml
+# templates/configmap.yaml
 #
-# Service Account for tremor helm charts
+# Configmap for tremor helm charts
+#
+# All files added here, will be mounted by default to
+# directory /etc/tremor/config
 #
 # @author Njegos Railic
-# @copyright 2020-2021, The Tremor Team 
+# @copyright 2020-2021, The Tremor Team
 #
 
-{{- if and .Values.serviceAccount.create (ne .Values.serviceAccount.name "default") }}
 apiVersion: v1
-kind: ServiceAccount
+kind: ConfigMap
 metadata:
-  name: {{ default (include "tremor.fullname" .) .Values.serviceAccount.name }}
+  name: {{ template "tremor.fullname" . }}-config
   labels:
     app: {{ template "tremor.fullname" . }}
     chart: {{ template "tremor.chart" . }}
-    heritage: {{ .Release.Service }}
-    project: {{ .Chart.Name }}
     release: {{ .Release.Name }}
-{{- end }}
+    heritage: {{ .Release.Service }}
+data:
+{{- range $key, $value := .Values.files }}
+  {{ $key }}: |-
+{{ $value | default "" | indent 4 }}
+{{- end -}}

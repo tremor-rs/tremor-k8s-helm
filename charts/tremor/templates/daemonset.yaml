@@ -13,16 +13,17 @@
 # limitations under the License.
 
 #
-# templates/deployment.yaml
+# templates/daemonset.yaml
 #
-# Deployment for tremor app.
+# DaemonSet template for tremor.
 #
-# @author Njegos Railic <nrailic@wayfair.com>
-# @copyright 2020 Wayfair, LLC -- All rights reserved.
+# @author Njegos Railic
+# @copyright 2020-2021, The Tremor Team
+#
 
-{{- if eq .Values.kind "Deployment" }}
+{{- if eq .Values.kind "DaemonSet" }}
+kind: DaemonSet
 apiVersion: apps/v1
-kind: Deployment
 metadata:
   name: {{ template "tremor.fullname" . }}
   labels:
@@ -32,13 +33,12 @@ metadata:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
 spec:
-  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: {{ template "tremor.fullname" . }}
       component: tremor
   updateStrategy:
-{{ toYaml .Values.updateStrategy | indent 4 }}
+  {{ toYaml .Values.updateStrategy | indent 4 }}
   template:
     metadata:
       labels:
@@ -47,46 +47,45 @@ spec:
         component: tremor
         heritage: {{ .Release.Service }}
         release: {{ .Release.Name }}
+      {{- with .Values.annotations }}
       annotations:
-        checksum/config: {{ tpl (toYaml .Values.files) . | sha256sum }}
+      {{- toYaml . | trimSuffix "\n" | nindent 8 }}
+      {{- end }}
     spec:
-      serviceAccount: {{ template "tremor.fullname" . }}
+      serviceAccountName: {{ template "tremor.fullname" . }}
       {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName | quote }}
       {{- end }}
+      {{- if .Values.psp.hostNetwork }}
+        hostNetwork: true
+      {{- end }}
       containers:
-        - name: event-exporter
+        - name: tremor
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: "{{ .Values.image.pullPolicy }}"
-          {{- with .Values.args }}
-          args:
-            {{ toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.ports }}
-          ports:
-            {{- range $key, $port := . }}
-            - name: {{ $key }}
-              {{ toYaml $port | nindent 14 }}
-            {{- end }}
-          {{- end }}
-          {{- with .Values.livenessProbe }}
-          livenessProbe:
-            {{ toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.readinessProbe }}
-          readinessProbe:
-            {{ toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.env }}
           env:
-          {{- range $key, $value := . }}
-            - name: {{ $key | upper | replace "." "_" }}
-              value: {{ $value | quote }}
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            # Used to trigger rolling update on config change
+            - name: CONFIG_HASH
+              value: {{ tpl (toYaml .Values.files) . | sha256sum }}
+          {{- if .Values.env }}
+            {{- toYaml .Values.env | nindent 12 }}
           {{- end }}
+          {{- if .Values.livenessProbe }}
+          livenessProbe: {{ toYaml .Values.livenessProbe | nindent 12 }}
           {{- end }}
-          {{- with .Values.resources }}
-          resources:
-            {{ toYaml . | nindent 12 }}
+          {{- if .Values.readinessProbe }}
+          readinessProbe: {{ toYaml .Values.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.startupProbe }}
+          startupProbe: {{ toYaml .Values.startupProbe | nindent 12 }}
           {{- end }}
           volumeMounts:
             - name: config
@@ -95,27 +94,35 @@ spec:
           {{- with .Values.extraVolumeMounts }}
             {{ toYaml . | nindent 12}}
           {{- end }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{ toYaml . }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
       {{- with .Values.extraInitContainers }}
       initContainers:
-        {{ toYaml . | indent 8}}
+        {{ toYaml . | nindent 8}}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
-        {{ toYaml . | indent 8 }}
+        {{ toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.affinity }}
       affinity:
-        {{ toYaml . | indent 8 }}
+        {{ toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:
-        {{ toYaml . | indent 8 }}
+        {{ toYaml . | nindent 8 }}
       {{- end }}
       volumes:
         - name: config
           configMap:
             name: {{ template "tremor.fullname" . }}-config
       {{- if .Values.extraVolumes }}
-        {{ toYaml .Values.extraVolumes | indent 8}}
+{{ toYaml .Values.extraVolumes | nindent 8}}
       {{- end }}
- {{- end -}}
+{{- end }}

@@ -35,27 +35,40 @@ spec:
   readOnlyRootFilesystem: false
   privileged: false
   allowPrivilegeEscalation: false
-  hostNetwork: true
+  {{- if .Values.psp.hostNetwork }}
+    hostNetwork: true
+  {{- end }}
+  {{- with .Values.psp.hostPorts }}
   hostPorts:
-  - min: 12201
-    max: 12204
-  hostIPC: true
-  hostPID: true
+  {{ toYaml . | nindent 4 }}
+  {{- end }}
+  hostIPC: false
+  hostPID: false
   runAsUser:
-    rule: 'RunAsAny'
+    # Require the container to run without root privileges.
+    rule: 'MustRunAsNonRoot'
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+      # Forbid adding the root group.
+      - min: 1
+        max: 65535
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      # Forbid adding the root group.
+      - min: 1
+        max: 65535
+  readOnlyRootFilesystem: false
   seLinux:
     rule: 'RunAsAny'
-  supplementalGroups:
-    rule: 'RunAsAny'
-  fsGroup:
-    rule: 'RunAsAny'
+  {{- with .Values.psp.allowedCapabilities }}
   allowedCapabilities:
-    - NET_ADMIN
-    - NET_RAW
+    {{ toYaml . | nindent 12 }}
+  {{- end }}
   volumes:
     - configMap
     - emptyDir
-    - secret
   requiredDropCapabilities:
     - ALL
 ---
@@ -95,3 +108,4 @@ subjects:
 - kind: ServiceAccount
   name: {{ template "tremor.fullname" . }}
 {{- end }}
+

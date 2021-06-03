@@ -12,10 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#
+# This chart deploys a tremor instance. Tremor is an event processing
+# system for unstructured data with rich support for structural pattern
+# matching and filtering.
+#
+# www.tremor.rs
+#
+# @author Njegos Railic
+# @copyright 2020-2021, The Tremor Team
+#
+
 apiVersion: "v1"
 appVersion: "1.0"
-description: "Chart to deploy tremor instance"
-name: "tremor-k8s-helm"
-version: "0.2.0"
+description: "Chart to deploy a tremor instance"
+icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/tremor/horizontal/color/tremor-horizontal-color.png
+name: "tremor"
+version: "0.1.0"
 maintainers:
   - name: Tremor Team
