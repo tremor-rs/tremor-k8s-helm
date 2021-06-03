@@ -1,0 +1,155 @@
+# Copyright 2020-2021, The Tremor Team
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#
+# values.yaml
+#
+# Default values for the tremor Helm chart.
+#
+# @author Njegos Railic
+# @copyright 2020-2021, The Tremor Team
+#
+
+affinity: {}
+
+annotations: {}
+
+args: {}
+
+autoscaling:
+  annotations: {}
+  customAutoscalingTemplate: []
+  enabled: true
+  maxReplicas: 2
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 50
+  targetMemoryUtilizationPercentage: 50
+
+env: {}
+
+extraContainers: []
+
+extraInitContainers: []
+
+extraVolumeMounts: []
+
+extraVolumes: {}
+
+files:
+  config.yaml: |-
+    onramp:
+      - id: metronome
+        type: metronome
+        config:
+          interval: 10000
+    binding:
+      - id: default
+        links:
+          '/onramp/metronome/{instance}/out': [ '/pipeline/main/{instance}/in' ]
+          '/pipeline/main/{instance}/out': [ '/offramp/system::stdout/system/in' ]
+          '/pipeline/system::metrics/system/out': [ '/offramp/system::stdout/system/in' ]
+    mapping:
+      /binding/default/01:
+        instance: '01'
+  main.trickle: select event from in into out
+
+fullnameOverride: ''
+
+image:
+  pullPolicy: IfNotPresent
+  repository: tremorproject/tremor
+  tag: 0.11.4
+
+# Tremor can be deployed as a DaemonSet as well
+kind: Deployment
+
+# Probes
+livenessProbe:
+  failureThreshold: 5
+  httpGet:
+    path: "/version"
+    port: 9898
+    scheme: HTTP
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: "/version"
+    port: 9898
+    scheme: HTTP
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+
+startupProbe: []
+# failureThreshold: 5
+# httpGet:
+#   port: 9898
+#   scheme: TCP
+# initialDelaySeconds: 5
+# periodSeconds: 5
+# successThreshold: 1
+# timeoutSeconds: 2
+
+nameOverride: ''
+
+nodeSelector: {}
+
+ports: {}
+
+priorityClassName: ''
+
+psp:
+  allowedCapabilities: {}
+  create: false
+  hostNetwork: false
+  hostPorts: {}
+
+# Please check HPA settings above
+replicaCount: 1
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+securityContext:
+  runAsUser: 1000
+
+service:
+  annotations: {}
+  enabled: false
+  name: tremor
+  type: ClusterIP
+
+serviceAccount:
+  create: true
+  name: ''
+
+tolerations: {}
+# - effect: NoSchedule
+#   operator: Exists
+
+updateStrategy:
+  rollingUpdate:
+    maxUnavailable: 1
+  type: RollingUpdate

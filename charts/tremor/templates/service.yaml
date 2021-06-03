@@ -13,9 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+#
 # templates/service.yaml
 #
-# Service for tremor app.
+# Service for Tremor app.
 #
 # @author Njegos Railic
 # @copyright 2020-2021, The Tremor Team
