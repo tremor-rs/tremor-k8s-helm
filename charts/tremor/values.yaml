@@ -141,7 +141,7 @@ securityContext:
   runAsNonRoot: true
   # OpenShift will set the correct nonroot userid by default
   # so the option runAsUser doesn't need to be supplied in that scenario.
-  # If you are an OpenShif user please comment out the following line.
+  # If you are an OpenShift user please comment out the following line.
   runAsUser: 1000
 
 service:
