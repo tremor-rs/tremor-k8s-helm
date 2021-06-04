@@ -23,6 +23,7 @@
 
 affinity: {}
 
+# Annotations to be added to Deployment or DaemonSet
 annotations: {}
 
 args: {}
@@ -30,7 +31,7 @@ args: {}
 autoscaling:
   annotations: {}
   customAutoscalingTemplate: []
-  enabled: true
+  enabled: false
   maxReplicas: 2
   minReplicas: 1
   targetCPUUtilizationPercentage: 50
@@ -72,7 +73,7 @@ image:
   tag: 0.11.4
 
 # Tremor can be deployed as a DaemonSet as well
-kind: Deployment
+kind: DaemonSet
 
 # Probes
 livenessProbe:
@@ -111,6 +112,9 @@ nameOverride: ''
 
 nodeSelector: {}
 
+# Annotations to be added to pods
+podAnnotations: {}
+
 ports: {}
 
 priorityClassName: ''
@@ -133,6 +137,11 @@ resources:
     memory: 256Mi
 
 securityContext:
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  # OpenShift will set the correct nonroot userid by default
+  # so the option runAsUser doesn't need to be supplied in that scenario.
+  # If you are an OpenShif user please comment out the following line.
   runAsUser: 1000
 
 service:
