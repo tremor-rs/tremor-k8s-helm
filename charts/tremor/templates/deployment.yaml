@@ -38,8 +38,10 @@ spec:
     matchLabels:
       app: {{ template "tremor.fullname" . }}
       component: tremor
-  updateStrategy:
-  {{ toYaml .Values.updateStrategy | nindent 4 }}
+  {{- if .Values.updateStrategy }}
+  strategy:
+    {{ toYaml .Values.updateStrategy | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       labels:
@@ -48,10 +50,12 @@ spec:
         component: tremor
         heritage: {{ .Release.Service }}
         release: {{ .Release.Name }}
-      {{- with .Values.annotations }}
+    {{- if .Values.podAnnotations }}
       annotations:
-      {{- toYaml . | trimSuffix "\n" | nindent 8 }}
+      {{- range $key, $value := .Values.podAnnotations }}
+        {{ $key }}: {{ $value | quote }}
       {{- end }}
+    {{- end }}
     spec:
       serviceAccount: {{ template "tremor.fullname" . }}
       {{- if .Values.priorityClassName }}
@@ -98,7 +102,7 @@ spec:
           {{- end }}
           {{- with .Values.securityContext }}
           securityContext:
-            {{ toYaml . }}
+            {{ toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.resources }}
           resources:
