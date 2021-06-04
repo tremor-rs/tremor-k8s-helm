@@ -1,9 +1,11 @@
-# Tremor for Kubernetes
+# Tremor for Kubernetes and OpenShift
 
 <img alt="Tremor for Kubernetes logo" src="tremornetes.png" width="25%" height="25%"/>
 
 This project derives from work by the Kubernetes team at Wayfair of general
 interest to users of Tremor and Kubernetes. The original work was by [Njegos Railic](https://github.com/njegosrailic) from Wayfair's Kubernetes SRE Team.
+
+Support for OpenShift was investigated by [Anton Whalley](https://github.com/No9).
 
 The project can be used as a template for deploying standard tremor installation
 for Kubernetes. This project can be forked and modified for specific use cases.
