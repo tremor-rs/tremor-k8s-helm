@@ -162,3 +162,8 @@ Conditions:
 Events:           <none>
 
 ```
+
+## Helm Chart Repository
+
+We use github pages to host a generated helm chart repository for helm chart releases [here](https://tremor-rs.github.io/tremor-k8s-helm/).
+
