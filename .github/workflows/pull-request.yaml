@@ -25,15 +25,13 @@ jobs:
         run: |
           changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
           if [[ -n "$changed" ]]; then
-            echo "::set-output name=changed::true"
+            echo "changed=yes" >> $GITHUB_ENV
           fi
 
       - name: Run chart-testing (lint)
         run: ct lint --target-branch ${{ github.event.repository.default_branch }}
 
-      - name: Create kind cluster
-        uses: helm/kind-action@v1.4.0
-        if: steps.list-changed.outputs.changed == 'true'
-
       - name: Run chart-testing (install)
-        run: ct install --all
+        if: env.changed == 'yes'
+        run: |
+          bash -xe ./e2e-test.sh
