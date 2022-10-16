@@ -30,4 +30,4 @@ icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/tremor/hori
 name: "tremor"
 version: "0.1.1"
 maintainers:
-  - name: Tremor Team
+  - name: tremor
