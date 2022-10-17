@@ -27,17 +27,12 @@ kind: Deployment
 metadata:
   name: {{ template "tremor.fullname" . }}
   labels:
-    app: {{ template "tremor.fullname" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    component: tremor
-    heritage: {{ .Release.Service }}
-    release: {{ .Release.Name }}
+    {{ include "tremor.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "tremor.fullname" . }}
-      component: tremor
+      {{ include "tremor.selectorLabels" . | nindent 6 }}
   {{- if .Values.updateStrategy }}
   strategy:
     {{ toYaml .Values.updateStrategy | nindent 4 }}
@@ -45,11 +40,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "tremor.fullname" . }}
-        chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-        component: tremor
-        heritage: {{ .Release.Service }}
-        release: {{ .Release.Name }}
+        {{ include "tremor.labels" . | nindent 8 }}
     {{- if .Values.podAnnotations }}
       annotations:
       {{- range $key, $value := .Values.podAnnotations }}

@@ -54,3 +54,27 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+
+{{- define "tremor.version" }}
+{{- if .Chart.AppVersion }}{{ .Chart.AppVersion | quote }}{{- end }}
+{{- end }}
+
+{{/*
+Common labels
+*/}}
+{{- define "tremor.labels" -}}
+helm.sh/chart: {{ include "tremor.chart" . }}
+{{ include "tremor.selectorLabels" . }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/part-of: {{ default (include "tremor.name" .) .Values.appPartOf }}
+app.kubernetes.io/component: {{ default (include "tremor.name" .) .Values.appComponent }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "tremor.selectorLabels" -}}
+app.kubernetes.io/version: {{ include "tremor.version" . }}
+app.kubernetes.io/name: {{ include "tremor.name" . }}
+app.kubernetes.io/instance: {{ include "tremor.fullname" . }}
+{{- end }}

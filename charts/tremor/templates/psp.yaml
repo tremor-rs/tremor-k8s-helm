@@ -27,10 +27,8 @@ kind: PodSecurityPolicy
 metadata:
   name: {{ template "tremor.fullname" . }}-unprivileged
   labels:
-    app: {{ template "tremor.fullname" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    heritage: {{ .Release.Service }}
-    release: {{ template "tremor.fullname" . }}
+    {{ include "tremor.labels" . | nindent 4 }}
+
 spec:
   readOnlyRootFilesystem: false
   privileged: false
@@ -77,10 +75,7 @@ kind: Role
 metadata:
   name: {{ template "tremor.fullname" . }}-unprivileged
   labels:
-    app: {{ template "tremor.fullname" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    heritage: {{ .Release.Service }}
-    release: {{ template "tremor.fullname" . }}
+    {{ include "tremor.labels" . | nindent 4 }}
 rules:
   - apiGroups:
       - extensions
@@ -96,10 +91,7 @@ kind: RoleBinding
 metadata:
   name: {{ template "tremor.fullname" . }}-RoleBinding
   labels:
-    app: {{ template "tremor.fullname" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    heritage: {{ .Release.Service }}
-    release: {{ template "tremor.fullname" . }}
+    {{ include "tremor.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
