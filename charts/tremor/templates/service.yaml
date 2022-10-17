@@ -29,10 +29,7 @@ kind: Service
 metadata:
   name: {{ .Values.service.name }}
   labels:
-    app: {{ template "tremor.name" . }}
-    chart: {{ template "tremor.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{ include "tremor.labels" . | nindent 4 }}
   annotations:
 {{- with .Values.service.annotations }}
 {{ toYaml . | indent 4 }}
@@ -45,5 +42,5 @@ spec:
 {{ toYaml $value | indent 6 }}
   {{- end }}
   selector:
-    app: {{ template "tremor.name" . }}
+    {{ include "tremor.selectorLabels" . | nindent 4 }}
 {{- end }}

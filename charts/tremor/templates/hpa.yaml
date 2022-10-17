@@ -30,11 +30,7 @@ metadata:
   {{- toYaml . | trimSuffix "\n" | nindent 4 }}
   {{- end }}
   labels:
-    app: {{ template "tremor.fullname" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    component: tremor
-    heritage: {{ .Release.Service }}
-    release: {{ .Release.Name }}
+    {{ include "tremor.labels" . | nindent 4 }}
   name: {{ include "tremor.fullname" . }}
 spec:
   scaleTargetRef:

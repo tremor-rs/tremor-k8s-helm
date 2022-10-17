@@ -29,10 +29,7 @@ kind: ConfigMap
 metadata:
   name: {{ template "tremor.fullname" . }}-config
   labels:
-    app: {{ template "tremor.fullname" . }}
-    chart: {{ template "tremor.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{ include "tremor.labels" . | nindent 4 }}
 data:
 {{- range $key, $value := .Values.files }}
   {{ $key }}: |-

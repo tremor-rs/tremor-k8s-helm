@@ -23,7 +23,7 @@ export CLUSTER_NAME=${CLUSTER_NAME:-chart-testing}
 # }
 
 get_tremor_pod() {
-    kubectl get pod -n $1 -l app=tremor -o jsonpath='{ .items[0].metadata.name }'
+    kubectl get pod -n $1 -l app.kubernetes.io/name=tremor -o jsonpath='{ .items[0].metadata.name }'
 }
 
 wait_for_pod() {
