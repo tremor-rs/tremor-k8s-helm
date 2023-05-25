@@ -48,29 +48,33 @@ extraVolumeMounts: []
 extraVolumes: {}
 
 files:
-  config.yaml: |-
-    onramp:
-      - id: metronome
-        type: metronome
-        config:
-          interval: 10000
-    binding:
-      - id: default
-        links:
-          '/onramp/metronome/{instance}/out': [ '/pipeline/main/{instance}/in' ]
-          '/pipeline/main/{instance}/out': [ '/offramp/system::stdout/system/in' ]
-          '/pipeline/system::metrics/system/out': [ '/offramp/system::stdout/system/in' ]
-    mapping:
-      /binding/default/01:
-        instance: '01'
-  main.trickle: select event from in into out
+  main.troy: |-
+    define flow main
+    flow
+      use std::time::nanos;
+      use tremor::pipelines;
+      use tremor::connectors;
+      define connector every_second from metronome
+      with
+        config = {"interval": nanos::from_seconds(2)}
+      end;
+
+      create connector every_second;
+      create connector console from connectors::console;
+      create pipeline main from pipelines::passthrough;
+
+      connect /connector/every_second to /pipeline/main;
+      connect /pipeline/main to /connector/console;
+    end;
+
+    deploy flow main
 
 fullnameOverride: ''
 
 image:
   pullPolicy: IfNotPresent
   repository: tremorproject/tremor
-  tag: 0.11.4
+  tag: 0.13.0-rc.12
 
 # Tremor can be deployed as a DaemonSet as well
 kind: DaemonSet

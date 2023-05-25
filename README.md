@@ -54,12 +54,14 @@ $ helm delete [RELEASE_NAME]
 
 Please check the following command for Helm v3:
 
+
 ```console
-# Helm install with tremor namespace already created
-$ helm install -n tremor [RELEASE_NAME] [HELM_REPO_NAME]]/tremor
 
 # Helm install and create namespace
-$ helm install -n tremor [RELEASE_NAME] [HELM_REPO_NAME]]/tremor --create-namespace
+$ helm install -n tremor [RELEASE_NAME] [HELM_REPO_NAME]/tremor --create-namespace
+
+# Helm install with tremor namespace already created
+$ helm install -n tremor [RELEASE_NAME] [HELM_REPO_NAME]/tremor
 
 ```
 
