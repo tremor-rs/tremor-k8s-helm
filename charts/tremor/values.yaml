@@ -83,7 +83,7 @@ kind: DaemonSet
 livenessProbe:
   failureThreshold: 5
   httpGet:
-    path: "/version"
+    path: "/v1/version"
     port: 9898
     scheme: HTTP
   initialDelaySeconds: 10
@@ -94,7 +94,7 @@ livenessProbe:
 readinessProbe:
   failureThreshold: 3
   httpGet:
-    path: "/version"
+    path: "/v1/version"
     port: 9898
     scheme: HTTP
   initialDelaySeconds: 10
