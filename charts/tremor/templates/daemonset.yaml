@@ -53,8 +53,8 @@ spec:
       {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName | quote }}
       {{- end }}
-      {{- if .Values.psp.hostNetwork }}
-        hostNetwork: true
+      {{- if .Values.hostNetwork }}
+      hostNetwork: true
       {{- end }}
       containers:
         - name: tremor
