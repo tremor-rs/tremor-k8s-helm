@@ -47,7 +47,7 @@ spec:
     {{- end }}
     spec:
       {{- with .Values.image.pullSecrets }}
-      imagePullSecrets: {{ . }}
+      imagePullSecrets: {{ toYaml . }}
       {{- end }}
       serviceAccountName: {{ template "tremor.fullname" . }}
       {{- if .Values.priorityClassName }}
