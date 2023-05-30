@@ -124,11 +124,7 @@ ports: {}
 
 priorityClassName: ""
 
-psp:
-  allowedCapabilities: {}
-  create: false
-  hostNetwork: false
-  hostPorts: {}
+hostNetwork: false
 
 # Please check HPA settings above
 replicaCount: 1
