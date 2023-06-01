@@ -3,6 +3,18 @@ entries:
   tremor:
   - apiVersion: v1
     appVersion: "1.0"
+    created: "2023-06-01T06:21:06.176779216Z"
+    description: Chart to deploy a tremor instance
+    digest: debfff551b271fcef50edffb657605ecf90b5cb2ec938975bb5c421da87e1157
+    icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/tremor/horizontal/color/tremor-horizontal-color.png
+    maintainers:
+    - name: tremor-rs
+    name: tremor
+    urls:
+    - https://github.com/tremor-rs/tremor-k8s-helm/releases/download/tremor-0.13.0-rc.12-4/tremor-0.13.0-rc.12-4.tgz
+    version: 0.13.0-rc.12-4
+  - apiVersion: v1
+    appVersion: "1.0"
     created: "2023-05-31T08:01:25.100572894Z"
     description: Chart to deploy a tremor instance
     digest: 35d184bdf0fbfc31802a5a1301017c496e844976e92e73cd1d376c5568d0c198
@@ -97,4 +109,4 @@ entries:
     urls:
     - https://github.com/tremor-rs/tremor-k8s-helm/releases/download/tremor-0.1.1/tremor-0.1.1.tgz
     version: 0.1.1
-generated: "2023-05-31T08:01:25.100616694Z"
+generated: "2023-06-01T06:21:06.176881415Z"
