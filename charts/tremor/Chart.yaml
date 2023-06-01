@@ -28,6 +28,6 @@ appVersion: "1.0"
 description: "Chart to deploy a tremor instance"
 icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/tremor/horizontal/color/tremor-horizontal-color.png
 name: "tremor"
-version: "0.13.0-rc.12-3"
+version: "0.13.0-rc.12-4"
 maintainers:
   - name: tremor-rs
